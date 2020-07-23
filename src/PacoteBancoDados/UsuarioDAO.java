@@ -50,7 +50,8 @@ public class UsuarioDAO {
 
     public boolean autenticaUsuario(UsuarioBean usuarios) {
 
-        boolean flag = false;
+        boolean flag;
+        flag = false;
 
         String sql = "select usuario,senha from usuarios where usuario=? and senha=?";
 
@@ -63,11 +64,7 @@ public class UsuarioDAO {
             ResultSet rs;
             rs = ps.executeQuery();
 
-            if (rs.next()) {
-                return true;
-            } else {
-                return false;
-            }
+            return rs.next();
 
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -79,7 +76,8 @@ public class UsuarioDAO {
 
     public boolean autenticaPermissao(UsuarioBean usuarios) {
 
-        boolean flag = false;
+        boolean flag;
+        flag = false;
 
         String sql = "select usuario,senha from permissao where usuario=? and senha=?";
 
@@ -92,11 +90,7 @@ public class UsuarioDAO {
             ResultSet rs;
             rs = ps.executeQuery();
 
-            if (rs.next()) {
-                return true;
-            } else {
-                return false;
-            }
+            return rs.next();
 
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -140,4 +134,44 @@ public class UsuarioDAO {
         }
     }
 
+    public String excluir(UsuarioBean usuarios) {
+
+        String sql = "delete from usuarios where usuario=?";
+
+        try {
+            PreparedStatement ps = getCon().prepareStatement(sql);
+
+            ps.setString(1, usuarios.getNomeUsuario());
+
+            if (ps.executeUpdate() > 0) {
+                return "Usuario excluido com sucesso!!!";
+            } else {
+                return "Erro ao excluir!!!";
+            }
+
+        } catch (SQLException ex) {
+            return ex.getMessage();
+        }
+
+    }
+
+    public String alterar(UsuarioBean usuarios) {
+
+        String sql = "update usuarios set usuario=? where usuario=?";
+
+        try {
+            PreparedStatement ps = getCon().prepareStatement(sql);
+
+            ps.setString(1, usuarios.getNomeUsuario());
+            ps.setString(2, usuarios.getSenhaUsuario());
+            
+            if (ps.executeUpdate() > 0) {
+                return "Usuario alterado com sucesso!!!";
+            } else {
+                return "Erro ao alterar!!!";
+            }
+        } catch (SQLException ex) {
+            return ex.getMessage();
+        }
+    }
 }

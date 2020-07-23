@@ -21,11 +21,12 @@ public class JFConfUsuario extends javax.swing.JFrame {
     public JFConfUsuario() {
         initComponents();
         txtNomeUsu.grabFocus();
-        
+
         URL url = this.getClass().getResource("/icone/logo1.png");
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url);
         this.setIconImage(iconeTitulo);
     }
+    public static boolean flag = false;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -49,9 +50,9 @@ public class JFConfUsuario extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtNomeUsu = new javax.swing.JTextField();
         txtSenhaUsu = new javax.swing.JPasswordField();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        txtRepetirSenhaUsu = new javax.swing.JPasswordField();
+        lblSenha = new javax.swing.JLabel();
+        lblConfSenha = new javax.swing.JLabel();
+        txtConfSenha = new javax.swing.JPasswordField();
         lblConfUsuario = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -159,13 +160,13 @@ public class JFConfUsuario extends javax.swing.JFrame {
 
         txtSenhaUsu.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setText("Senha");
+        lblSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblSenha.setText("Senha");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel6.setText("Repetir Senha");
+        lblConfSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblConfSenha.setText("Repetir Senha");
 
-        txtRepetirSenhaUsu.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtConfSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         lblConfUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icone/conf.png"))); // NOI18N
 
@@ -179,12 +180,12 @@ public class JFConfUsuario extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtRepetirSenhaUsu, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtNomeUsu, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel5)
+                            .addComponent(lblSenha)
                             .addComponent(txtSenhaUsu, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6)
+                            .addComponent(lblConfSenha)
                             .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
@@ -231,13 +232,13 @@ public class JFConfUsuario extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtNomeUsu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
+                        .addComponent(lblSenha)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtSenhaUsu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(14, 14, 14)
-                        .addComponent(jLabel6)
+                        .addComponent(lblConfSenha)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRepetirSenhaUsu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -251,7 +252,7 @@ public class JFConfUsuario extends javax.swing.JFrame {
         // TODO add your handling code here:
         int linha = tblUsuario.getSelectedRow();
 
-        String codigo, nomeUsuario, senhaUsuario, repeteSenha;
+        String nomeUsuario;
 
         nomeUsuario = (String) tblUsuario.getValueAt(linha, 0);
 
@@ -293,7 +294,7 @@ public class JFConfUsuario extends javax.swing.JFrame {
         txtNomeUsu.setText("");
         txtNomeUsu.setText("");
         txtSenhaUsu.setText("");
-        txtRepetirSenhaUsu.setText("");
+        txtConfSenha.setText("");
 
         DefaultTableModel dtm = (DefaultTableModel) tblUsuario.getModel();
 
@@ -306,10 +307,56 @@ public class JFConfUsuario extends javax.swing.JFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
+        Connection con = Conexao.abrirConexao();
+
+        UsuarioDAO ud = new UsuarioDAO(con);
+
+        UsuarioBean ub = new UsuarioBean();
+
+        ub.setNomeUsuario(txtNomeUsu.getText());
+
+        if (txtNomeUsu.getText().equals(txtNomeUsu.getText())) {
+            ub.setNomeUsuario(txtNomeUsu.getText());
+
+            String retorno = ud.excluir(ub);
+
+            JOptionPane.showMessageDialog(null, retorno, "Usuario excluido!!", -1);
+
+            txtNomeUsu.setText("");
+            txtNomeUsu.grabFocus();
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao excluir");
+            txtNomeUsu.grabFocus();
+
+        }
+        Conexao.fecharConexao(con);
+
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         // TODO add your handling code here:
+        Connection con = Conexao.abrirConexao();
+
+        UsuarioDAO ud = new UsuarioDAO(con);
+
+        UsuarioBean ub = new UsuarioBean();
+
+        ub.setNomeUsuario(txtNomeUsu.getText());
+
+        if ((txtNomeUsu.getText().equals(txtNomeUsu.getText()))&&(txtSenhaUsu.getText().equals(txtConfSenha.getText()))) {
+            ub.setNomeUsuario(txtNomeUsu.getText());
+            ub.setSenhaUsuario(txtSenhaUsu.getText());
+
+            String retorno = ud.alterar(ub);
+
+            JOptionPane.showMessageDialog(null, retorno, "Usuario Alterado", -1);
+            txtNomeUsu.grabFocus();
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao Alterar!!");
+            txtNomeUsu.grabFocus();
+        }
+        Conexao.fecharConexao(con);
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
@@ -322,25 +369,24 @@ public class JFConfUsuario extends javax.swing.JFrame {
 
         ub.setNomeUsuario(txtNomeUsu.getText());
 
-        if (txtSenhaUsu.getText().equals(txtRepetirSenhaUsu.getText())) {
+        if ((txtSenhaUsu.getText().equals(txtConfSenha.getText())) && (txtNomeUsu.getText().equals(txtNomeUsu.getText()))) {
             ub.setSenhaUsuario(txtSenhaUsu.getText());
+            ub.setNomeUsuario(txtNomeUsu.getText());
 
             String retorno = ud.cadastraUsuario(ub);
 
-            JOptionPane.showMessageDialog(null, retorno,"Cadastro Usuário.",-1);
-
-            //JOptionPane.showMessageDialog(null, ud.cadastraUsuario(ub));
+            JOptionPane.showMessageDialog(null, retorno, "Cadastro Usuário.", -1);
 
             txtNomeUsu.setText("");
             txtSenhaUsu.setText("");
-            txtRepetirSenhaUsu.setText("");
+            txtConfSenha.setText("");
             txtSenhaUsu.grabFocus();
         } else {
             JOptionPane.showMessageDialog(null, "A senha está diferente!!!",
-                "Cadastro Usuário.",JOptionPane.ERROR_MESSAGE);
+                    "Cadastro Usuário.", JOptionPane.ERROR_MESSAGE);
 
             txtSenhaUsu.setText("");
-            txtRepetirSenhaUsu.setText("");
+            txtConfSenha.setText("");
             txtSenhaUsu.grabFocus();
         }
 
@@ -400,14 +446,14 @@ public class JFConfUsuario extends javax.swing.JFrame {
     private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblConfSenha;
     private javax.swing.JLabel lblConfUsuario;
+    private javax.swing.JLabel lblSenha;
     private javax.swing.JTable tblUsuario;
+    private javax.swing.JPasswordField txtConfSenha;
     private javax.swing.JTextField txtNomeUsu;
-    private javax.swing.JPasswordField txtRepetirSenhaUsu;
     private javax.swing.JPasswordField txtSenhaUsu;
     // End of variables declaration//GEN-END:variables
 }
